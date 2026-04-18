@@ -44,6 +44,11 @@ kubectl describe secret mongodb
 # Get MongoDB root password
 export MONGODB_ROOT_PASSWORD=$(kubectl get secret mongodb \
   -o jsonpath="{.data.mongodb-root-password}" | base64 --decode)
+
+# Check root password
+echo $MONGODB_ROOT_PASSWORD
+
+# Test connection
 # Create another pod to connect to MongoDB via mongo cli command
 kubectl run mongodb-client --rm --tty -i --restart='Never' --image bitnami/mongodb:4.4.4-debian-10-r27 \
   --command -- mongo admin --host mongodb --authenticationDatabase admin -u root -p $MONGODB_ROOT_PASSWORD
@@ -82,6 +87,15 @@ echo $(kubectl get secret bookinfo-dev-ratings-mongodb-secret \
   -o jsonpath="{.data.mongodb-password}" | base64 --decode)
 ```
 
+* Encode password to base64 CLI
+```bash
+echo -n "ratings-dev-root" | base64
+```
+* Decode password from base64 CLI
+```bash
+echo -n "xxxxxxxxxxxxx" | base64 --decode
+```
+
 ### Prepare Helm Value file
 
 * Check `values.yaml` on <https://github.com/bitnami/charts/tree/master/bitnami/mongodb> to see all configuration
@@ -98,6 +112,9 @@ persistence:
   enabled: false
 initdbScriptsConfigMap: bookinfo-dev-ratings-mongodb-initdb
 ```
+* `ConfigMap` ใน Kube มีหน้าที่
+* 1. ตัวแปร Key-Value ใน .env
+* 2. การ mount file
 
 ### Create initial script with Config Map
 
@@ -109,7 +126,7 @@ initdbScriptsConfigMap: bookinfo-dev-ratings-mongodb-initdb
 {"rating": 4}
 ```
 
-* Create `ratings_data.json` inside `databases` directory with following content
+* Create `script.sh` inside `databases` directory with following content
 
 ```bash
 #!/bin/sh
@@ -139,7 +156,7 @@ kubectl describe configmap bookinfo-dev-ratings-mongodb-initdb
 helm list
 helm delete mongodb
 
-# Deploy new MongoDB with Helm Value
+# Deploy new MongoDB with Custom Helm Value of Helm Chart
 helm install -f k8s/helm-values/values-bookinfo-dev-ratings-mongodb.yaml \
   bookinfo-dev-ratings-mongodb bitnami/mongodb
 ```
@@ -150,6 +167,8 @@ helm install -f k8s/helm-values/values-bookinfo-dev-ratings-mongodb.yaml \
 # Get MongoDB root password
 export MONGODB_ROOT_PASSWORD=$(kubectl get secret bookinfo-dev-ratings-mongodb-secret \
   -o jsonpath="{.data.mongodb-root-password}" | base64 --decode)
+
+# Test connection
 # Create another pod to connect to MongoDB via mongo cli command
 kubectl run mongodb-client --rm --tty -i --restart='Never' --image bitnami/mongodb:4.4.4-debian-10-r27 \
   --command -- mongo admin --host bookinfo-dev-ratings-mongodb --authenticationDatabase admin \

@@ -6,8 +6,13 @@
 # See the Docker credentials file
 cat ~/.docker/config.json
 # Show secret
+# Every namespace has a default secret
 kubectl get secret
-# Create Docker credentials Kubernetes Secret
+
+# Set default namespace
+kubectl config set-context $(kubectl config current-context) --namespace=bookinfo-dev
+
+# Create Kubernetes Secret via Docker credentials
 kubectl create secret generic registry-bookinfo \
   --from-file=.dockerconfigjson=$HOME/.docker/config.json \
   --type=kubernetes.io/dockerconfigjson
@@ -106,8 +111,10 @@ spec:
 ```
 
 ```bash
-# Create deployment resource
+# Create deployment resource (Deployment, Service, Ingress)
 kubectl apply -f k8s/
+
+# Test โดยการเข้า browser และตามด้วย Host/endpoint
 
 # Check status of each resource
 kubectl get deployment

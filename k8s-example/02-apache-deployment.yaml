@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache
+  namespace: bookinfo-dev
+  labels:
+    app: apache
+spec:
+  replicas: 3 # create 3 pods
+  selector:  
+    matchLabels:
+      app: apache # must match pod template labels; ensures Deployment maintains 3 replicas
+  template:
+    metadata:
+      labels:
+        app: apache
+
+    # Container / Pods
+    spec:           # spec is the same as spec in pod.yaml
+      containers:
+        - image: httpd:2.4.43-alpine
+          name: apache
+
+      # Example busybox pod
+        - name: busybox
+          image: busybox
+          command:
+          - sleep
+          - "3600"

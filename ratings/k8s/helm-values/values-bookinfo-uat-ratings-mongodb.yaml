@@ -1,0 +1,9 @@
+image:
+  tag: 4.4.4-debian-10-r27 # Choose mongodb tag version
+auth:
+  existingSecret: bookinfo-uat-ratings-mongodb-secret # Password; Reference to bookinfo-uat-ratings-mongodb-secret.metadata.name
+  username: ratings-uat # Database username
+  database: ratings-uat # Database name
+persistence:
+  enabled: false
+initdbScriptsConfigMap: bookinfo-uat-ratings-mongodb-initdb

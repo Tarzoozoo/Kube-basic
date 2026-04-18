@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookinfo-dev-ratings
+  namespace: bookinfo-dev
+  labels:
+    app: bookinfo-dev-ratings
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookinfo-dev-ratings
+  template:
+    metadata:
+      labels:
+        app: bookinfo-dev-ratings
+    spec:
+      containers:
+        - name: bookinfo-dev-ratings
+
+          # You have to change it according to your private registry
+          image: asia.gcr.io/[PROJECT_ID]/bookinfo-ratings:dev
+          imagePullPolicy: Always # Policy that confirm to use lastest image
+          ports:
+            - containerPort: 9080
+              name: web-port
+              protocol: TCP
+          livenessProbe: # ยิง GET เพื่อเช็ค2 ถ้า failed -> restart pod
+            httpGet:
+              path: /health
+              port: 9080
+              scheme: HTTP
+          readinessProbe: # ยิง GET เพื่อเช็ค1 1 ครั้ง
+            httpGet:
+              path: /health
+              port: 9080
+              scheme: HTTP
+          env:
+            # - name: SERVICE_VERSION # SERVICE_VERSION = v1 -> fetch data from itself
+            #   value: v1
+            - name: SERVICE_VERSION
+              value: v2
+            - name: MONGO_DB_URL
+              value: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev # Match with service-name:port/db
+            - name: MONGO_DB_USERNAME
+              value: ratings-dev
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookinfo-dev-ratings-mongodb-secret
+                  key: mongodb-password
+      imagePullSecrets:
+        - name: registry-bookinfo # Secret name to use for authentication when pulling image

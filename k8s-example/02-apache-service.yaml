@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache
+  namespace: bookinfo-dev
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: apache # it must match with deployment.metadata.lables.app

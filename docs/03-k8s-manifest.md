@@ -1,6 +1,6 @@
 # Kubernetes Manifest Files Workshop
 
-## Deploy Pod with Manifest File
+## Deploy Pod with Manifest File (Busybox)
 
 * `mkdir ~/k8s` to create folder for Kubernetes Manifest File
 * Create `01-pod.yaml` file with below content
@@ -48,10 +48,11 @@ kubectl explain pod.spec
 # Show manifest syntax for Kind = deployment
 kubectl explain deployment
 ```
-
-## Deployment and Service Manifest File
+# Look this !!!
+## Deployment and Service Manifest File (Apache)
 
 * Create `02-apache-deployment.yaml` file with below content
+* It create pod via deployment file.
 
 ```yaml
 apiVersion: apps/v1
@@ -92,10 +93,17 @@ spec:
     app: apache # must match with deployment.metadata.name
 ```
 
+* Create resources
 ```bash
 kubectl create -f 02-apache-deployment.yaml -f 02-apache-service.yaml --record
 kubectl get deployments
 kubectl get services -w
+```
+
+* Check resources
+```bash
+kubectl get deployment, pod, service
+kubectl get deploy, pod, svc
 ```
 
 ## Clean every deployment and service

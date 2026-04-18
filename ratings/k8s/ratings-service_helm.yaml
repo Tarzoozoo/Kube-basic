@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookinfo-dev-ratings # Application-ENV-Service
+  namespace: bookinfo-dev
+spec:
+  type: ClusterIP # wait for invoked by ingress controller
+  ports:
+    - port: 9080 # service details, productpage, ratings, reviews use this port
+  selector:
+    app: bookinfo-dev-ratings # must same as deployment.lables.app
