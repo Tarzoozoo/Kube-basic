@@ -170,9 +170,8 @@ export MONGODB_ROOT_PASSWORD=$(kubectl get secret bookinfo-dev-ratings-mongodb-s
 
 # Test connection
 # Create another pod to connect to MongoDB via mongo cli command
-kubectl run mongodb-client --rm --tty -i --restart='Never' --image bitnami/mongodb:4.4.4-debian-10-r27 \
-  --command -- mongo admin --host bookinfo-dev-ratings-mongodb --authenticationDatabase admin \
-  -u root -p $MONGODB_ROOT_PASSWORD
+kubectl run mongodb-client --rm --tty -i --restart='Never' --image mongo:6 -n bookinfo-dev \
+  --command -- mongosh "mongodb://root:$MONGODB_ROOT_PASSWORD@bookinfo-dev-ratings-mongodb:27017/admin?authSource=admin"
 show dbs
 use ratings-dev
 show collections
@@ -187,17 +186,17 @@ exit
 ```yaml
 ...
         env:
-        - name: SERVICE_VERSION
-          value: v2
-        - name: MONGO_DB_URL
-          value: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev
-        - name: MONGO_DB_USERNAME
-          value: ratings-dev
-        - name: MONGO_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: bookinfo-dev-ratings-mongodb-secret
-              key: mongodb-password
+          - name: SERVICE_VERSION
+            value: v2
+          - name: MONGO_DB_URL
+            value: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev
+          - name: MONGO_DB_USERNAME
+            value: ratings-dev
+          - name: MONGO_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bookinfo-dev-ratings-mongodb-secret
+                key: mongodb-passwords
 ...
 ```
 

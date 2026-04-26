@@ -1,0 +1,28 @@
+# ตัวแปรของ ratings
+ratings:
+  namespace: bookinfo-dev
+  # image: asia.gcr.io/[PROJECT_ID]/bookinfo-ratings
+  image: tarzoozoo/bookinfo-ratings
+  tag: dev
+  replicas: 1
+  imagePullSecrets: registry-bookinfo
+  port: 9080
+  healthCheckPath: "/health"
+  mongodbPasswordExistingSecret: bookinfo-dev-ratings-mongodb-secret
+
+# ตัวแปรของ ingress
+ingress:
+  ingressClassName: nginx
+  host: bookinfo.dev.opsta.net
+  path: "/ratings(/|$)(.*)"
+  serviceType: ClusterIP
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  
+
+# ตัวแปรของ environment variables
+extraEnv:
+  SERVICE_VERSION: v2
+  MONGO_DB_URL: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev
+  MONGO_DB_USERNAME: ratings-dev

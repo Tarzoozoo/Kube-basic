@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookinfo-dev-ratings
+  namespace: bookinfo-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: bookinfo.dev.opsta.net
+      http:
+        paths:
+          - path: /ratings(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: bookinfo-dev-ratings
+                port:
+                  number: 9080

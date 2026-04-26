@@ -1,5 +1,5 @@
-image:
-  tag: 4.4.4-debian-10-r27 # Choose mongodb tag version
+# image:
+#   tag: 4.4.4-debian-10-r27 # Choose mongodb tag version
 auth:
   existingSecret: bookinfo-dev-ratings-mongodb-secret # Password; Reference to bookinfo-dev-ratings-mongodb-secret.metadata.name
   username: ratings-dev # Database username
